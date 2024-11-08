@@ -1,4 +1,5 @@
-extends Sprite2D
+extends AnimatedSprite2D
+class_name Salmon
 
 const UP = Vector2(0, -1)
 const DOWN = Vector2(0, 1)
@@ -38,3 +39,7 @@ func _process(delta: float) -> void:
 	if dir == DOWN:
 		rotation_degrees = -90
 		flip_h = true
+	if selected and animation != "selected":
+		play("selected")
+	if not selected and animation != "default":
+		play("default")
