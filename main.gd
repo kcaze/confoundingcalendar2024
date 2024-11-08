@@ -1,6 +1,11 @@
 extends Node2D
 
 const S_SALMON = preload("res://salmon.tscn")
+const WATERFALL_TOP = 2
+const WATERFALL_BOTTOM = 17
+const WATERFALL_LEFT = 2
+const WATERFALL_RIGHT = 8
+var ROCKS = {}
 
 var undo_stack = []
 var salmons : Array[Salmon] = []
@@ -9,10 +14,12 @@ var idx_selected = 0
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	add_salmon(0, 18, Vector2(-1,0))
-	add_salmon(3, 18, Vector2(1,0))
-	add_salmon(0, 16, Vector2(0,-1))
-	add_salmon(3, 17, Vector2(0, 1))
-	pass # Replace with function body.
+	add_salmon(3, 18, Vector2(-1,0))
+	for y in range(2, 18):
+		for x in range(0, 2):
+			ROCKS[Vector2(x,y)] = true
+		for x in range(9, 11):
+			ROCKS[Vector2(x,y)] = true
 
 # (x,y) refer to the head position
 func add_salmon(x, y, dir):
@@ -36,6 +43,22 @@ func _input(event: InputEvent) -> void:
 
 func move_salmon(dir):
 	var state = serialize()
+	
+	var new_pos = salmons[idx_selected].grid_pos + dir
+	# Cannot move into rocks
+	if new_pos in ROCKS:
+		return
+	# Cannot move into other salmon
+	# TODO: Maybe allow pushing other salmon.
+	for i in range(len(salmons)):
+		if i == idx_selected:
+			continue
+		var other_pos = salmons[i].grid_pos
+		var other_dir = salmons[i].dir
+		if new_pos == other_pos or new_pos == other_pos - other_dir:
+			return
+	
+	
 	salmons[idx_selected].grid_pos += dir
 	salmons[idx_selected].dir = dir
 	if len(undo_stack) == 0 or not deep_equals(state, undo_stack[-1]):
