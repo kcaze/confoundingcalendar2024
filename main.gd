@@ -1,6 +1,7 @@
 extends Node2D
 
 const S_SALMON = preload("res://salmon.tscn")
+const S_WATERFALL_SPRAY = preload("res://waterfall_spray.tscn")
 const WATERFALL_TOP = 2
 const WATERFALL_BOTTOM = 17
 const WATERFALL_LEFT = 2
@@ -13,13 +14,14 @@ var idx_selected = 0
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	add_salmon(0, 18, Vector2(-1,0))
-	add_salmon(3, 18, Vector2(-1,0))
+	# Initialize Rocks
 	for y in range(2, 18):
 		for x in range(0, 2):
 			ROCKS[Vector2(x,y)] = true
 		for x in range(9, 11):
 			ROCKS[Vector2(x,y)] = true
+	add_salmon(0, 18, Vector2(-1,0))
+	add_salmon(3, 18, Vector2(-1,0))
 
 # (x,y) refer to the head position
 func add_salmon(x, y, dir):
@@ -58,9 +60,25 @@ func move_salmon(dir):
 		if new_pos == other_pos or new_pos == other_pos - other_dir:
 			return
 	
-	
 	salmons[idx_selected].grid_pos += dir
 	salmons[idx_selected].dir = dir
+	
+	# Update the in_waterfall state for all salmon
+	for i in range(len(salmons)):
+		salmons[i].in_waterfall = salmons[i].grid_pos.y < 18
+	
+	# Lower energy for all salmon in waterfall
+	for i in range(len(salmons)):
+		if salmons[i].in_waterfall:
+			if salmons[i].energy == 0:
+				salmons[i].dir = Vector2(0,1)
+				salmons[i].grid_pos.y += 1
+				salmons[i].in_waterfall = salmons[i].grid_pos.y < 18
+			else:
+				salmons[i].energy = max(0, salmons[i].energy-1)
+		if not salmons[i].in_waterfall:
+			salmons[i].energy = salmons[i].max_energy
+	
 	if len(undo_stack) == 0 or not deep_equals(state, undo_stack[-1]):
 		undo_stack.push_back(state)
 

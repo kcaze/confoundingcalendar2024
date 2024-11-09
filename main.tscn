@@ -1,13 +1,219 @@
-[gd_scene load_steps=3 format=3 uid="uid://cjf1gc33chhcc"]
+[gd_scene load_steps=6 format=3 uid="uid://cjf1gc33chhcc"]
 
 [ext_resource type="Texture2D" uid="uid://vpskenbixxt7" path="res://assets/sprites/background.png" id="1_4jxs7"]
 [ext_resource type="Script" path="res://main.gd" id="1_7e8x2"]
+[ext_resource type="Texture2D" uid="uid://dye3ghbfshu4a" path="res://assets/sprites/pool_top.png" id="3_5b3ny"]
+[ext_resource type="Texture2D" uid="uid://dmv38uj2f878b" path="res://assets/sprites/pool.png" id="4_x8ysr"]
+[ext_resource type="PackedScene" uid="uid://djm0w88epko17" path="res://waterfall_spray.tscn" id="5_6fx1u"]
 
 [node name="Main" type="Node2D"]
 script = ExtResource("1_7e8x2")
 
 [node name="Background" type="Sprite2D" parent="."]
+z_index = -20
 position = Vector2(88, 160)
 texture = ExtResource("1_4jxs7")
 
+[node name="PoolTop" type="Sprite2D" parent="."]
+z_index = 5
+position = Vector2(88, 16)
+texture = ExtResource("3_5b3ny")
+
+[node name="PoolBottom" type="Sprite2D" parent="."]
+z_index = 5
+position = Vector2(88, 304)
+texture = ExtResource("4_x8ysr")
+
 [node name="Salmons" type="Node2D" parent="."]
+
+[node name="WaterfallSprays" type="Node2D" parent="."]
+metadata/_edit_lock_ = true
+
+[node name="WaterfallSpray" parent="WaterfallSprays" instance=ExtResource("5_6fx1u")]
+position = Vector2(34, 82)
+
+[node name="WaterfallSpray2" parent="WaterfallSprays" instance=ExtResource("5_6fx1u")]
+position = Vector2(38, 96)
+
+[node name="WaterfallSpray3" parent="WaterfallSprays" instance=ExtResource("5_6fx1u")]
+position = Vector2(34, 211)
+
+[node name="WaterfallSpray4" parent="WaterfallSprays" instance=ExtResource("5_6fx1u")]
+position = Vector2(39, 222)
+
+[node name="WaterfallSpray5" parent="WaterfallSprays" instance=ExtResource("5_6fx1u")]
+position = Vector2(44, 200)
+
+[node name="WaterfallSpray6" parent="WaterfallSprays" instance=ExtResource("5_6fx1u")]
+position = Vector2(44, 327)
+
+[node name="WaterfallSpray7" parent="WaterfallSprays" instance=ExtResource("5_6fx1u")]
+position = Vector2(43, 72)
+
+[node name="WaterfallSpray8" parent="WaterfallSprays" instance=ExtResource("5_6fx1u")]
+position = Vector2(48, 106)
+
+[node name="WaterfallSpray9" parent="WaterfallSprays" instance=ExtResource("5_6fx1u")]
+position = Vector2(53, 85)
+
+[node name="WaterfallSpray10" parent="WaterfallSprays" instance=ExtResource("5_6fx1u")]
+position = Vector2(57, 126)
+
+[node name="WaterfallSpray11" parent="WaterfallSprays" instance=ExtResource("5_6fx1u")]
+position = Vector2(57, 1)
+
+[node name="WaterfallSpray12" parent="WaterfallSprays" instance=ExtResource("5_6fx1u")]
+position = Vector2(63, 91)
+
+[node name="WaterfallSpray13" parent="WaterfallSprays" instance=ExtResource("5_6fx1u")]
+position = Vector2(53, 215)
+
+[node name="WaterfallSpray14" parent="WaterfallSprays" instance=ExtResource("5_6fx1u")]
+position = Vector2(49, 241)
+
+[node name="WaterfallSpray15" parent="WaterfallSprays" instance=ExtResource("5_6fx1u")]
+position = Vector2(57, 257)
+
+[node name="WaterfallSpray16" parent="WaterfallSprays" instance=ExtResource("5_6fx1u")]
+position = Vector2(62, 218)
+
+[node name="WaterfallSpray17" parent="WaterfallSprays" instance=ExtResource("5_6fx1u")]
+position = Vector2(68, 250)
+
+[node name="WaterfallSpray18" parent="WaterfallSprays" instance=ExtResource("5_6fx1u")]
+position = Vector2(69, 122)
+
+[node name="WaterfallSpray19" parent="WaterfallSprays" instance=ExtResource("5_6fx1u")]
+position = Vector2(68, -2)
+
+[node name="WaterfallSpray20" parent="WaterfallSprays" instance=ExtResource("5_6fx1u")]
+position = Vector2(74, 55)
+
+[node name="WaterfallSpray21" parent="WaterfallSprays" instance=ExtResource("5_6fx1u")]
+position = Vector2(74, 187)
+
+[node name="WaterfallSpray22" parent="WaterfallSprays" instance=ExtResource("5_6fx1u")]
+position = Vector2(74, 318)
+
+[node name="WaterfallSpray23" parent="WaterfallSprays" instance=ExtResource("5_6fx1u")]
+position = Vector2(78, 78)
+
+[node name="WaterfallSpray24" parent="WaterfallSprays" instance=ExtResource("5_6fx1u")]
+position = Vector2(83, 37)
+
+[node name="WaterfallSpray25" parent="WaterfallSprays" instance=ExtResource("5_6fx1u")]
+position = Vector2(79, 205)
+
+[node name="WaterfallSpray26" parent="WaterfallSprays" instance=ExtResource("5_6fx1u")]
+position = Vector2(79, 335)
+
+[node name="WaterfallSpray27" parent="WaterfallSprays" instance=ExtResource("5_6fx1u")]
+position = Vector2(34, 335)
+
+[node name="WaterfallSpray28" parent="WaterfallSprays" instance=ExtResource("5_6fx1u")]
+position = Vector2(83, 169)
+
+[node name="WaterfallSpray29" parent="WaterfallSprays" instance=ExtResource("5_6fx1u")]
+position = Vector2(83, 298)
+
+[node name="WaterfallSpray30" parent="WaterfallSprays" instance=ExtResource("5_6fx1u")]
+position = Vector2(87, 222)
+
+[node name="WaterfallSpray31" parent="WaterfallSprays" instance=ExtResource("5_6fx1u")]
+position = Vector2(87, 97)
+
+[node name="WaterfallSpray32" parent="WaterfallSprays" instance=ExtResource("5_6fx1u")]
+position = Vector2(87, -28)
+
+[node name="WaterfallSpray33" parent="WaterfallSprays" instance=ExtResource("5_6fx1u")]
+position = Vector2(92, 53)
+
+[node name="WaterfallSpray34" parent="WaterfallSprays" instance=ExtResource("5_6fx1u")]
+position = Vector2(92, 178)
+
+[node name="WaterfallSpray35" parent="WaterfallSprays" instance=ExtResource("5_6fx1u")]
+position = Vector2(93, 306)
+
+[node name="WaterfallSpray36" parent="WaterfallSprays" instance=ExtResource("5_6fx1u")]
+position = Vector2(98, 268)
+
+[node name="WaterfallSpray37" parent="WaterfallSprays" instance=ExtResource("5_6fx1u")]
+position = Vector2(97, 140)
+
+[node name="WaterfallSpray38" parent="WaterfallSprays" instance=ExtResource("5_6fx1u")]
+position = Vector2(97, 11)
+
+[node name="WaterfallSpray39" parent="WaterfallSprays" instance=ExtResource("5_6fx1u")]
+position = Vector2(102, 46)
+
+[node name="WaterfallSpray40" parent="WaterfallSprays" instance=ExtResource("5_6fx1u")]
+position = Vector2(102, 173)
+
+[node name="WaterfallSpray41" parent="WaterfallSprays" instance=ExtResource("5_6fx1u")]
+position = Vector2(103, 302)
+
+[node name="WaterfallSpray42" parent="WaterfallSprays" instance=ExtResource("5_6fx1u")]
+position = Vector2(107, 245)
+
+[node name="WaterfallSpray43" parent="WaterfallSprays" instance=ExtResource("5_6fx1u")]
+position = Vector2(107, 119)
+
+[node name="WaterfallSpray44" parent="WaterfallSprays" instance=ExtResource("5_6fx1u")]
+position = Vector2(107, -6)
+
+[node name="WaterfallSpray45" parent="WaterfallSprays" instance=ExtResource("5_6fx1u")]
+position = Vector2(112, 51)
+
+[node name="WaterfallSpray46" parent="WaterfallSprays" instance=ExtResource("5_6fx1u")]
+position = Vector2(112, 178)
+
+[node name="WaterfallSpray47" parent="WaterfallSprays" instance=ExtResource("5_6fx1u")]
+position = Vector2(112, 308)
+
+[node name="WaterfallSpray48" parent="WaterfallSprays" instance=ExtResource("5_6fx1u")]
+position = Vector2(117, 227)
+
+[node name="WaterfallSpray49" parent="WaterfallSprays" instance=ExtResource("5_6fx1u")]
+position = Vector2(117, 101)
+
+[node name="WaterfallSpray50" parent="WaterfallSprays" instance=ExtResource("5_6fx1u")]
+position = Vector2(117, -24)
+
+[node name="WaterfallSpray51" parent="WaterfallSprays" instance=ExtResource("5_6fx1u")]
+position = Vector2(121, 24)
+
+[node name="WaterfallSpray52" parent="WaterfallSprays" instance=ExtResource("5_6fx1u")]
+position = Vector2(121, 155)
+
+[node name="WaterfallSpray53" parent="WaterfallSprays" instance=ExtResource("5_6fx1u")]
+position = Vector2(121, 296)
+
+[node name="WaterfallSpray54" parent="WaterfallSprays" instance=ExtResource("5_6fx1u")]
+position = Vector2(127, 238)
+
+[node name="WaterfallSpray55" parent="WaterfallSprays" instance=ExtResource("5_6fx1u")]
+position = Vector2(126, 113)
+
+[node name="WaterfallSpray56" parent="WaterfallSprays" instance=ExtResource("5_6fx1u")]
+position = Vector2(126, -23)
+
+[node name="WaterfallSpray57" parent="WaterfallSprays" instance=ExtResource("5_6fx1u")]
+position = Vector2(130, 78)
+
+[node name="WaterfallSpray58" parent="WaterfallSprays" instance=ExtResource("5_6fx1u")]
+position = Vector2(133, 209)
+
+[node name="WaterfallSpray59" parent="WaterfallSprays" instance=ExtResource("5_6fx1u")]
+position = Vector2(132, 335)
+
+[node name="WaterfallSpray60" parent="WaterfallSprays" instance=ExtResource("5_6fx1u")]
+position = Vector2(138, 266)
+
+[node name="WaterfallSpray61" parent="WaterfallSprays" instance=ExtResource("5_6fx1u")]
+position = Vector2(140, 145)
+
+[node name="WaterfallSpray62" parent="WaterfallSprays" instance=ExtResource("5_6fx1u")]
+position = Vector2(135, 76)
+
+[node name="WaterfallSpray63" parent="WaterfallSprays" instance=ExtResource("5_6fx1u")]
+position = Vector2(140, 19)
