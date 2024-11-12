@@ -12,13 +12,13 @@ const RIGHT = Vector2(1, 0)
 var grid_pos = Vector2(0,0)
 var dir = Vector2(1,0)
 var selected = false
-var max_energy = 4
+var max_energy = 5
 var energy = max_energy
 var energy_sprites = []
-var in_waterfall = false
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	energy = max_energy
 	for i in range(max_energy):
 		var sprite = Sprite2D.new()
 		sprite.texture = TEX_ENERGY
@@ -62,16 +62,10 @@ func _process(delta: float) -> void:
 	
 	# Selected outline
 	$SelectedOutline.visible = selected
-	if in_waterfall and dir != Vector2(0, 1):
-		$Sprite.play("submerged")
-	else:
-		$Sprite.play("default")
+	$Sprite.play("default")
 	
 	# Selected z-index
-	if selected:
-		z_index = 30 if in_waterfall else 15
-	else:
-		z_index = 3 if in_waterfall else 10
+	z_index = 15 if selected else 5
 	
 	# Energy icons
 	var center = Vector2(0, -13) if dir.y == 0 else Vector2(0,-22)
