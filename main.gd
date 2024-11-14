@@ -9,6 +9,8 @@ const WATERFALL_RIGHT = 8
 var ROCKS = {}
 
 var undo_stack = []
+var current_state = null
+var save_state = null
 var salmons : Array[Salmon] = []
 var pools = []
 var idx_selected = 0
@@ -26,14 +28,18 @@ func _ready() -> void:
 	for y in range(18, 20):
 		ROCKS[Vector2(-1, y)] = true
 		ROCKS[Vector2(11, y)] = true
-	add_salmon(8, 18, Vector2(0,-1),4)
-	add_salmon(6, 18, Vector2(0,-1),3)
-	add_salmon(4, 18, Vector2(0,-1),2)
 	add_salmon(2, 18, Vector2(0,-1),1)
+	add_salmon(4, 18, Vector2(0,-1),2)
+	add_salmon(6, 18, Vector2(0,-1),3)
+	add_salmon(8, 18, Vector2(0,-1),4)
+	#add_salmon(8, 7, Vector2(0,-1),3)
+	#add_salmon(8, 9, Vector2(0,-1),2)
+	#add_salmon(8, 11, Vector2(0,-1),1)
 	for pool in get_tree().get_nodes_in_group("2pool"):
 		var pos = Vector2(floor((pool.position.x-8)/16), floor(pool.position.y/16))
 		pools.append(pos)
 		pools.append(pos+Vector2(1,0))
+	load_game()
 
 # (x,y) refer to the head position
 func add_salmon(x, y, dir, max_energy):
@@ -55,13 +61,24 @@ func _input(event: InputEvent) -> void:
 		move_salmon(Vector2(1,0))
 	if Input.is_action_just_pressed("LEFT"):
 		move_salmon(Vector2(-1,0))
-	if Input.is_action_just_pressed("UNDO"):
+	for i in range(1, 5):
+		if Input.is_action_just_pressed("SELECT"+str(i)):
+			for j in range(len(salmons)):
+				if salmons[j].max_energy == i:
+					idx_selected = j
+					break
+	if Input.is_action_pressed("UNDO"):
 		if len(undo_stack) > 0:
 			deserialize(undo_stack.pop_back())
-
+	if Input.is_action_just_pressed("SAVE"):
+		save_state = serialize()
+		$SaveIcon.stop()
+		$SaveIcon.play("default")
+	if Input.is_action_just_pressed("LOAD"):
+		if save_state != null:
+			deserialize(save_state)
 func move_salmon(dir):
-	var state = serialize()
-	
+	var prev_state = serialize()
 	var new_pos = salmons[idx_selected].grid_pos + dir
 	var in_pool = {}
 	
@@ -119,7 +136,7 @@ func move_salmon(dir):
 			
 	# Restore energy for any salmon that are now below the waterfall
 	for i in range(len(salmons)):
-		if salmons[i].grid_pos.y >= 18 or in_pool[i]:
+		if salmons[i].grid_pos.y >= 18 or (salmons[i].grid_pos - salmons[i].dir).y >= 18 or in_pool[i]:
 			salmons[i].energy = salmons[i].max_energy
 
 
@@ -188,11 +205,13 @@ func move_salmon(dir):
 	
 	# Restore energy for any salmon that are now below the waterfall
 	for i in range(len(salmons)):
-		if salmons[i].grid_pos.y >= 18 or in_pool[i]:
+		if salmons[i].grid_pos.y >= 18 or (salmons[i].grid_pos - salmons[i].dir).y >= 18 or in_pool[i]:
 			salmons[i].energy = salmons[i].max_energy
 	
-	if len(undo_stack) == 0 or not deep_equals(state, undo_stack[-1]):
-		undo_stack.push_back(state)
+	current_state = serialize()
+	if len(undo_stack) == 0 or not deep_equals(current_state, prev_state):
+		undo_stack.push_back(prev_state)
+		save_game()
 
 func serialize():
 	var state = []
@@ -232,3 +251,21 @@ func _process(delta: float) -> void:
 	for i in range(len(salmons)):
 		salmons[i].selected = idx_selected == i
 	pass
+
+func load_game():
+	if FileAccess.file_exists("user://savegame.save"):
+		var save_file = FileAccess.open("user://savegame.save", FileAccess.READ)
+		var json_string = save_file.get_as_text()
+		var data = str_to_var(json_string)
+		current_state = data["current_state"]
+		save_state = data["save_state"]
+		undo_stack = data["undo_stack"]
+		deserialize(current_state)
+		
+func save_game():
+	var save_file = FileAccess.open("user://savegame.save", FileAccess.WRITE)
+	save_file.store_line(var_to_str({
+		"current_state": serialize(),
+		"save_state": save_state,
+		"undo_stack": undo_stack,
+	}))
