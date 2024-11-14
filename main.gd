@@ -39,7 +39,18 @@ func _ready() -> void:
 		var pos = Vector2(floor((pool.position.x-8)/16), floor(pool.position.y/16))
 		pools.append(pos)
 		pools.append(pos+Vector2(1,0))
+	
 	load_game()
+	salmons[0].grid_pos = Vector2(5, 13)
+	salmons[0].dir = Vector2(1, 0)
+	salmons[1].grid_pos = Vector2(5, 12)
+	salmons[1].dir = Vector2(-1,0)
+	salmons[2].grid_pos = Vector2(4, 14)
+	salmons[2].dir = Vector2(1,0)
+	salmons[3].grid_pos = Vector2(4, 12)
+	salmons[3].dir = Vector2(1,0)
+	for i in range(len(salmons)):
+		salmons[i].energy = salmons[i].max_energy
 
 # (x,y) refer to the head position
 func add_salmon(x, y, dir, max_energy):
@@ -118,6 +129,8 @@ func move_salmon(dir):
 							salmons[c].grid_pos.y + (-1 if salmons[c].dir.y > 0 else 0)) + dir
 						if top in pools and bottom not in pools:
 							pushed_into_rocks = true
+					if dir == Vector2(0, 1) and (salmons[c].grid_pos in pools or salmons[c].grid_pos - salmons[c].dir in pools):
+						pushed_into_rocks = true
 				for c in new_curr:
 					to_push[c] = true
 				curr = new_curr
@@ -138,7 +151,6 @@ func move_salmon(dir):
 	for i in range(len(salmons)):
 		if salmons[i].grid_pos.y >= 18 or (salmons[i].grid_pos - salmons[i].dir).y >= 18 or in_pool[i]:
 			salmons[i].energy = salmons[i].max_energy
-
 
 	# Drop salmon that are out of energy, letting them rest on another salmon if possible.
 	var tired_salmon = {}
