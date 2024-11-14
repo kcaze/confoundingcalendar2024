@@ -1,7 +1,6 @@
-[gd_scene load_steps=13 format=3 uid="uid://c8gye5ghn8w0l"]
+[gd_scene load_steps=12 format=3 uid="uid://c8gye5ghn8w0l"]
 
 [ext_resource type="Script" path="res://salmon.gd" id="2_b50mi"]
-[ext_resource type="SpriteFrames" uid="uid://b3ot7s7drjk5i" path="res://assets/sprite_frames/salmon.tres" id="2_vpdpo"]
 [ext_resource type="Texture2D" uid="uid://cqtrd20181fwy" path="res://assets/sprites/salmon_selected.png" id="3_apcwa"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_bev83"]
@@ -71,9 +70,7 @@ animations = [{
 [node name="Salmon" type="Node2D"]
 script = ExtResource("2_b50mi")
 
-[node name="Sprite" type="AnimatedSprite2D" parent="."]
-sprite_frames = ExtResource("2_vpdpo")
-animation = &"submerged"
+[node name="Sprite" type="Sprite2D" parent="."]
 
 [node name="SelectedOutline" type="AnimatedSprite2D" parent="."]
 visible = false

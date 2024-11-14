@@ -41,16 +41,16 @@ func _ready() -> void:
 		pools.append(pos+Vector2(1,0))
 	
 	load_game()
-	salmons[0].grid_pos = Vector2(5, 13)
-	salmons[0].dir = Vector2(1, 0)
-	salmons[1].grid_pos = Vector2(5, 12)
-	salmons[1].dir = Vector2(-1,0)
-	salmons[2].grid_pos = Vector2(4, 14)
-	salmons[2].dir = Vector2(1,0)
-	salmons[3].grid_pos = Vector2(4, 12)
-	salmons[3].dir = Vector2(1,0)
-	for i in range(len(salmons)):
-		salmons[i].energy = salmons[i].max_energy
+	#salmons[0].grid_pos = Vector2(5, 13)
+	#salmons[0].dir = Vector2(1, 0)
+	#salmons[1].grid_pos = Vector2(5, 12)
+	#salmons[1].dir = Vector2(-1,0)
+	#salmons[2].grid_pos = Vector2(4, 14)
+	#salmons[2].dir = Vector2(1,0)
+	#salmons[3].grid_pos = Vector2(4, 12)
+	#salmons[3].dir = Vector2(1,0)
+	#for i in range(len(salmons)):
+		#salmons[i].energy = salmons[i].max_energy
 
 # (x,y) refer to the head position
 func add_salmon(x, y, dir, max_energy):
@@ -219,6 +219,9 @@ func move_salmon(dir):
 	for i in range(len(salmons)):
 		if salmons[i].grid_pos.y >= 18 or (salmons[i].grid_pos - salmons[i].dir).y >= 18 or in_pool[i]:
 			salmons[i].energy = salmons[i].max_energy
+			salmons[i].energy_depleting = false
+		else:
+			salmons[i].energy_depleting = true
 	
 	current_state = serialize()
 	if len(undo_stack) == 0 or not deep_equals(current_state, prev_state):
@@ -228,7 +231,7 @@ func move_salmon(dir):
 func serialize():
 	var state = []
 	for s in salmons:
-		state.append({"grid_pos": s.grid_pos, "dir": s.dir, "energy": s.energy})
+		state.append({"grid_pos": s.grid_pos, "dir": s.dir, "energy": s.energy, "energy_depleting": s.energy_depleting})
 	return state
 
 func deserialize(state):
@@ -236,6 +239,7 @@ func deserialize(state):
 		salmons[i].grid_pos = state[i]["grid_pos"]
 		salmons[i].dir = state[i]["dir"]
 		salmons[i].energy = state[i]["energy"]
+		salmons[i].energy_depleting = state[i]["energy_depleting"]
 
 func deep_equals(t, s):
 	if typeof(t) != typeof(s):

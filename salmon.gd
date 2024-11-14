@@ -1,8 +1,9 @@
 extends Node2D
 class_name Salmon
 
-const TEX_ENERGY = preload("res://assets/sprites/energy.png")
-const TEX_ENERGY_EMPTY = preload("res://assets/sprites/energy_empty.png")
+const TEX_SALMON_TIRED = preload("res://assets/sprites/salmon_tired.png")
+const TEX_SALMON = preload("res://assets/sprites/salmon.png")
+const S_ENERGY = preload("res://energy.tscn")
 
 const UP = Vector2(0, -1)
 const DOWN = Vector2(0, 1)
@@ -15,14 +16,13 @@ var selected = false
 var max_energy = 5
 var energy = max_energy
 var energy_sprites = []
+var energy_depleting = false
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	energy = max_energy
 	for i in range(max_energy):
-		var sprite = Sprite2D.new()
-		sprite.texture = TEX_ENERGY
-		sprite.z_index = 30
+		var sprite = S_ENERGY.instantiate()
 		energy_sprites.append(sprite)
 		add_child(sprite)
 
@@ -62,7 +62,7 @@ func _process(delta: float) -> void:
 	
 	# Selected outline
 	$SelectedOutline.visible = selected
-	$Sprite.play("default")
+	$Sprite.texture = TEX_SALMON if energy > 0 else TEX_SALMON_TIRED
 	
 	# Selected z-index
 	z_index = 15 if selected else 5
@@ -71,4 +71,9 @@ func _process(delta: float) -> void:
 	var center = Vector2(0, -13) if dir.y == 0 else Vector2(0,-22)
 	for i in range(max_energy):
 		energy_sprites[i].position = center + Vector2(6 * (i - (max_energy-1)/2.0),0)
-		energy_sprites[i].texture = TEX_ENERGY if i < energy else TEX_ENERGY_EMPTY
+		if i < energy-1:
+			energy_sprites[i].play("default")
+		elif i == energy-1:
+			energy_sprites[i].play("depleting" if energy_depleting else "default")
+		else:
+			energy_sprites[i].play("empty")

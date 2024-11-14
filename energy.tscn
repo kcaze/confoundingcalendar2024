@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://b7r3ps5agpfeo"]
+
+[ext_resource type="SpriteFrames" uid="uid://bxhmbwdsqag0t" path="res://assets/sprite_frames/energy.tres" id="1_upvd1"]
+
+[node name="Energy" type="AnimatedSprite2D"]
+z_index = 30
+sprite_frames = ExtResource("1_upvd1")
