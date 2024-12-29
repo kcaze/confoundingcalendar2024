@@ -25,6 +25,8 @@ func _ready() -> void:
 		var sprite = S_ENERGY.instantiate()
 		energy_sprites.append(sprite)
 		add_child(sprite)
+	$Sprite.material = $Sprite.material.duplicate()
+	$SelectedOutline.material = $SelectedOutline.material.duplicate()
 
 func serialize():
 	return {
@@ -62,8 +64,15 @@ func _process(delta: float) -> void:
 	
 	# Selected outline
 	$SelectedOutline.visible = selected
-	$Sprite.texture = TEX_SALMON if energy > 0 else TEX_SALMON_TIRED
-	
+	$Sprite.texture = TEX_SALMON if energy > 0 or not energy_depleting else TEX_SALMON_TIRED
+	var in_water = grid_pos.y > 17 or grid_pos.y - dir.y > 17
+	var rot = int(-$Sprite.rotation_degrees + 360)%360
+	($Sprite.material as ShaderMaterial).set_shader_parameter("in_water", in_water)
+	($Sprite.material as ShaderMaterial).set_shader_parameter("rotation", rot)
+	($Sprite.material as ShaderMaterial).set_shader_parameter("flip_v", dir == DOWN)
+	($SelectedOutline.material as ShaderMaterial).set_shader_parameter("in_water", in_water)
+	($SelectedOutline.material as ShaderMaterial).set_shader_parameter("rotation", rot)
+	($SelectedOutline.material as ShaderMaterial).set_shader_parameter("flip_v", dir == DOWN)
 	# Selected z-index
 	z_index = 15 if selected else 5
 	
@@ -77,3 +86,15 @@ func _process(delta: float) -> void:
 			energy_sprites[i].play("depleting" if energy_depleting else "default")
 		else:
 			energy_sprites[i].play("empty")
+	
+	if dir.y == 0:
+		$Sweat1.position = Vector2(18, -8)
+		$Sweat2.position = Vector2(-18, -8)
+	if dir.y == -1:
+		$Sweat1.position = Vector2(13, -13)
+		$Sweat2.position = Vector2(-13, -13)
+	if dir.y == 1:
+		$Sweat1.position = Vector2(13, 9)
+		$Sweat2.position = Vector2(-13, 9)
+	$Sweat1.visible = energy_depleting and energy > 0
+	$Sweat2.visible = energy_depleting and energy > 0

@@ -2,6 +2,8 @@ extends Node2D
 
 const S_SALMON = preload("res://salmon.tscn")
 const S_WATERFALL_SPRAY = preload("res://waterfall_spray.tscn")
+const TEX_SOUND_ON = preload("res://assets/sprites/sound_on_icon.png")
+const TEX_SOUND_OFF = preload("res://assets/sprites/sound_off_icon.png")
 const WATERFALL_TOP = 2
 const WATERFALL_BOTTOM = 17
 const WATERFALL_LEFT = 2
@@ -14,6 +16,9 @@ var save_state = null
 var salmons : Array[Salmon] = []
 var pools = []
 var idx_selected = 0
+var win = false
+var initial_state = null
+var sound_on = true
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -40,7 +45,10 @@ func _ready() -> void:
 		pools.append(pos)
 		pools.append(pos+Vector2(1,0))
 	
-	load_game()
+	initial_state = serialize()
+	#load_game()
+	#salmons[3].grid_pos = Vector2(4, 3)
+	#salmons[3].energy = 4
 	#salmons[0].grid_pos = Vector2(5, 13)
 	#salmons[0].dir = Vector2(1, 0)
 	#salmons[1].grid_pos = Vector2(5, 12)
@@ -62,6 +70,22 @@ func add_salmon(x, y, dir, max_energy):
 	$Salmons.add_child(salmon)
 
 func _input(event: InputEvent) -> void:
+	if win:
+		return
+	if event is InputEventMouseButton:
+		if event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+			var mouse_pos = get_global_mouse_position()
+			if $SoundIcon.get_rect().has_point($SoundIcon.to_local(mouse_pos)):
+				sound_on = not sound_on
+				save_game()
+			if $Controls/Close.get_rect().has_point($Controls/Close.to_local(mouse_pos)):
+				$Controls.visible = false
+			if $InfoIcon.get_rect().has_point($InfoIcon.to_local(mouse_pos)):
+				$Controls.visible = true
+
+	if $Controls.visible:
+		return
+	
 	if Input.is_action_just_pressed("ACTION"):
 		idx_selected = (idx_selected + 1) % len(salmons)
 	if Input.is_action_just_pressed("UP"):
@@ -81,14 +105,24 @@ func _input(event: InputEvent) -> void:
 	if Input.is_action_pressed("UNDO"):
 		if len(undo_stack) > 0:
 			deserialize(undo_stack.pop_back())
+			win = false
 	if Input.is_action_just_pressed("SAVE"):
-		save_state = serialize()
-		$SaveIcon.stop()
-		$SaveIcon.play("default")
+		if not win:
+			save_state = serialize()
+			$SaveIcon.stop()
+			$SaveIcon.play("default")
 	if Input.is_action_just_pressed("LOAD"):
+		win = false
 		if save_state != null:
 			deserialize(save_state)
+		else:
+			deserialize(initial_state)
+	
+	
 func move_salmon(dir):
+	if win:
+		return
+	
 	var prev_state = serialize()
 	var new_pos = salmons[idx_selected].grid_pos + dir
 	var in_pool = {}
@@ -136,10 +170,14 @@ func move_salmon(dir):
 				curr = new_curr
 		
 	if not new_pos in ROCKS and not pushed_into_rocks and salmons[idx_selected].energy > 0 and not (new_pos-Vector2(0,1) in pools and dir == Vector2(0,1)) and not (new_pos in pools and dir == Vector2(0, -1)):
+		#$SplashAudio.play()
 		for i in to_push:
 			salmons[i].grid_pos += dir
 		salmons[idx_selected].grid_pos += dir
 		salmons[idx_selected].dir = dir
+	else:
+		pass
+		#$InvalidAudio.play()
 	
 	for i in range(len(salmons)):
 		in_pool[i] = false
@@ -213,7 +251,8 @@ func move_salmon(dir):
 							#is_covered[c] = true
 							#break
 			if typeof(is_covered[0]) != TYPE_BOOL or typeof(is_covered[1]) != TYPE_BOOL:
-				salmons[i].energy = max(0, salmons[i].energy-1)
+				if salmons[i].energy_depleting:
+					salmons[i].energy = max(0, salmons[i].energy-1)
 	
 	# Restore energy for any salmon that are now below the waterfall
 	for i in range(len(salmons)):
@@ -224,9 +263,16 @@ func move_salmon(dir):
 			salmons[i].energy_depleting = true
 	
 	current_state = serialize()
-	if len(undo_stack) == 0 or not deep_equals(current_state, prev_state):
-		undo_stack.push_back(prev_state)
-		save_game()
+	
+	# Check win condition
+	for i in range(len(salmons)):
+		if salmons[i].grid_pos.y <= 1 or (salmons[i].grid_pos - salmons[i].dir).y <= 1:
+			win = true
+	
+	if not win:
+		if len(undo_stack) == 0 or not deep_equals(current_state, prev_state):
+			undo_stack.push_back(prev_state)
+			save_game()
 
 func serialize():
 	var state = []
@@ -266,8 +312,15 @@ func deep_equals(t, s):
 func _process(delta: float) -> void:
 	for i in range(len(salmons)):
 		salmons[i].selected = idx_selected == i
-	pass
-
+	$WinScreen.visible = win
+	var bus_idx = AudioServer.get_bus_index("Master")
+	AudioServer.set_bus_mute(bus_idx, not sound_on)
+	$SoundIcon.texture = TEX_SOUND_ON if sound_on else TEX_SOUND_OFF
+	if win:
+		var mat = ($WinScreen.material as ShaderMaterial)
+		mat.set_shader_parameter("t", mat.get_shader_parameter("t")+0.75*delta)
+	$InfoIcon.visible = not $Controls.visible
+	
 func load_game():
 	if FileAccess.file_exists("user://savegame.save"):
 		var save_file = FileAccess.open("user://savegame.save", FileAccess.READ)
@@ -276,6 +329,7 @@ func load_game():
 		current_state = data["current_state"]
 		save_state = data["save_state"]
 		undo_stack = data["undo_stack"]
+		sound_on = data["sound_on"]
 		deserialize(current_state)
 		
 func save_game():
@@ -284,4 +338,5 @@ func save_game():
 		"current_state": serialize(),
 		"save_state": save_state,
 		"undo_stack": undo_stack,
+		"sound_on": sound_on
 	}))

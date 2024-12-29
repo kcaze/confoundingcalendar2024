@@ -1,7 +1,24 @@
-[gd_scene load_steps=12 format=3 uid="uid://c8gye5ghn8w0l"]
+[gd_scene load_steps=23 format=3 uid="uid://c8gye5ghn8w0l"]
 
 [ext_resource type="Script" path="res://salmon.gd" id="2_b50mi"]
+[ext_resource type="Shader" path="res://assets/salmon.gdshader" id="2_wit2s"]
+[ext_resource type="Texture2D" uid="uid://cr2p53y8j1enk" path="res://assets/sprites/salmon.png" id="3_8d2pf"]
 [ext_resource type="Texture2D" uid="uid://cqtrd20181fwy" path="res://assets/sprites/salmon_selected.png" id="3_apcwa"]
+[ext_resource type="Texture2D" uid="uid://t17r3jlrsv0s" path="res://assets/sprites/salmon_sweat.png" id="5_pynuc"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_aymbj"]
+shader = ExtResource("2_wit2s")
+shader_parameter/in_water = true
+shader_parameter/rotation = 0
+shader_parameter/frames = 1
+shader_parameter/flip_v = null
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_q0y6c"]
+shader = ExtResource("2_wit2s")
+shader_parameter/in_water = true
+shader_parameter/rotation = 0
+shader_parameter/frames = 8
+shader_parameter/flip_v = null
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_bev83"]
 atlas = ExtResource("3_apcwa")
@@ -67,12 +84,71 @@ animations = [{
 "speed": 20.0
 }]
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_x23lt"]
+atlas = ExtResource("5_pynuc")
+region = Rect2(0, 0, 10, 7)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_sngq4"]
+atlas = ExtResource("5_pynuc")
+region = Rect2(10, 0, 10, 7)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_15ah8"]
+atlas = ExtResource("5_pynuc")
+region = Rect2(20, 0, 10, 7)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rm1g5"]
+atlas = ExtResource("5_pynuc")
+region = Rect2(30, 0, 10, 7)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tooav"]
+atlas = ExtResource("5_pynuc")
+region = Rect2(40, 0, 10, 7)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_q2681"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_x23lt")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_sngq4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_15ah8")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rm1g5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_tooav")
+}],
+"loop": true,
+"name": &"default",
+"speed": 10.0
+}]
+
 [node name="Salmon" type="Node2D"]
 script = ExtResource("2_b50mi")
 
 [node name="Sprite" type="Sprite2D" parent="."]
+material = SubResource("ShaderMaterial_aymbj")
+texture = ExtResource("3_8d2pf")
 
 [node name="SelectedOutline" type="AnimatedSprite2D" parent="."]
-visible = false
+material = SubResource("ShaderMaterial_q0y6c")
 sprite_frames = SubResource("SpriteFrames_6mveu")
 autoplay = "default"
+
+[node name="Sweat1" type="AnimatedSprite2D" parent="."]
+z_index = 5
+position = Vector2(13, 9)
+sprite_frames = SubResource("SpriteFrames_q2681")
+autoplay = "default"
+
+[node name="Sweat2" type="AnimatedSprite2D" parent="."]
+z_index = 5
+position = Vector2(-13, 9)
+sprite_frames = SubResource("SpriteFrames_q2681")
+autoplay = "default"
+frame = 1
+flip_h = true
